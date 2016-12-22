@@ -9,13 +9,17 @@ Gem::Specification.new do |s|
   s.version     = SsoUsersApi::VERSION
   s.authors     = ["Thomas Hoen"]
   s.email       = ["tom@givecorps.om"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of SsoUsersApi."
-  s.description = "TODO: Description of SsoUsersApi."
+  s.homepage    = ""
+  s.summary     = "Add, update, and query users on the sso server"
+  s.description = ""
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
-  s.test_files = Dir["test/**/*"]
+  s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", "~> 4.2.7.1"
+  s.add_dependency "flexirest"
+
+  s.add_development_dependency 'pry' # server side Rails debugging in terminal
+  s.add_development_dependency 'pry-byebug' # provides stepper for pry
 end
