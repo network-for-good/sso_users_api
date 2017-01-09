@@ -13,7 +13,7 @@ If it is likely that you will have to obtain a token repeatedly, you may want to
 To request the token, after setting the username and password. Use:
 
 ````
-  SsoUsersApi::Token.create
+  SsoUsersApi::Token.new.create
 ````
 
 ## Using the Users API
@@ -40,6 +40,17 @@ Before you can use the Users api, you must set the access token on the Base clas
 ````
   SsoUsersApi::User.new(id: "6e4de28f-0044-4c37-9f14-29b48ff66d40", username: "hoenth@gmail.com", first_name: "Tom", last_name: "Hoen", claims: [ { type: "nfg_account", value: "2087252" } ]).update
 ````
+
+## Using the User Manager
+This gem provides a convenience method for using the api which performs the interactions with the api for you.
+
+To use the Manager, simply pass in the admin/user you want to Add/Update and the manager will make the appropriate calls
+
+````
+SsoUsersApi::Manager.new(user).call
+````
+
+The Manager will create a new user, or update an existing user, depending on the value of a sso_id field. If this attribute does not exist on the user object, it will always use the create (which works like an update on the api). If there is an sso_id attribute, and it is blank, it will perform the create, then update the sso_id field. If the sso_id field has a value, it will use the update function.
 
 ## Console
 To start a console, bundle, then cd into spec/dummy. Runs `rails c` fro there
