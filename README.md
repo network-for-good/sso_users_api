@@ -52,5 +52,17 @@ SsoUsersApi::Manager.new(user).call
 
 The Manager will create a new user, or update an existing user, depending on the value of a sso_id field. If this attribute does not exist on the user object, it will always use the create (which works like an update on the api). If there is an sso_id attribute, and it is blank, it will perform the create, then update the sso_id field. If the sso_id field has a value, it will use the update function.
 
+## Using the User Manager Job
+The UserManagerJob is an activejob class that can be used where the interaction with the identity server can happen asynchroneously.
+
+To use the job, simple call perform_later on the class, passing in the id of the user and the class name of the user.
+
+````
+user = Admin.find(132)
+SsoUsersApi::ManagerJob.perform_later(132, user.class.name)
+````
+
+If the interaction with the sso api fails (TimeOut, HTTPConnection, 500, etc), the job will put itself back on the queue after waiting 5 seconds.
+
 ## Console
 To start a console, bundle, then cd into spec/dummy. Runs `rails c` fro there
