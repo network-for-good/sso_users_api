@@ -6,6 +6,7 @@ require 'sso_users_api/base'
 require 'sso_users_api/user'
 require 'sso_users_api/token'
 require 'sso_users_api/manager'
+require 'sso_users_api/manager_job'
 
 
 
