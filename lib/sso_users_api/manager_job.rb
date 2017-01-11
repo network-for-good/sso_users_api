@@ -11,7 +11,7 @@ module SsoUsersApi
       user = class_name.constantize.find(id)
       SsoUsersApi::Manager.new(user).call
     rescue StandardError => e
-      sleep 5
+      sleep 5 * count
       self.class.perform_later(id, class_name, count + 1)
     end
 
