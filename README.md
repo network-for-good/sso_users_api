@@ -17,10 +17,10 @@ To request the token, after setting the username and password. Use:
 ````
 
 ## Using the Users API
-Before you can use the Users api, you must set the access token on the Base class so it can be used to set the authorization header
+Before you can use the Users api, you must set the access token on the Base class so it can be used to set the authorization header. Add the following line to an initializer file and set the token in API_KEYS (do not include it in the repository)
 
 ````
-  SsoUsersApi::Base.access_token [access_token created from above]
+  SsoUsersApi::Base.access_token = [access_token created from above]
 ````
 
 ### Creating a new user
@@ -43,6 +43,15 @@ Before you can use the Users api, you must set the access token on the Base clas
 
 ## Using the User Manager
 This gem provides a convenience method for using the api which performs the interactions with the api for you.
+
+Before using the manager, you should create a migration to add an sso_id field to whatever user class will be managed using this library.  For example, if the user class was Admins, the migration would be the following:
+
+````
+  def change
+    add_column :admins, :sso_id, :string, foreign_key: false
+  end
+
+````
 
 To use the Manager, simply pass in the admin/user you want to Add/Update and the manager will make the appropriate calls
 
