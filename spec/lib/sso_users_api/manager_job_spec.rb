@@ -1,6 +1,7 @@
 require "spec_helper"
 require 'sso_users_api/manager_job'
 require 'sso_users_api/manager'
+require 'flexirest'
 
 class DummyUser
   def self.find(id)
