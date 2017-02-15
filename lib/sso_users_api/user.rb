@@ -5,7 +5,7 @@ module SsoUsersApi
     # before using, the access_token must be set on the base class, i.e
     # SsoUsersApi::Base.access_token [access_token]
 
-    base_url Rails.env.production? ? "https://users-qa.networkforgood.org/api" : "https://users.networkforgood.org/api"
+    base_url Rails.env.production? ? "https://users.networkforgood.org/api" : "https://users-qa.networkforgood.org/api"
     verbose true
 
     get :all, "/user"
