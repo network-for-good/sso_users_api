@@ -16,32 +16,24 @@ describe SsoUsersApi::ManagerJob do
   let(:user) { double }
 
   context "and the passed class name belongs to a valid object" do
-    context "when no count value is included" do
-      it "should call the Manager service" do
-        expect(SsoUsersApi::Manager).to receive(:new).with(user).and_return(double(call: true))
-        SsoUsersApi::ManagerJob.perform_now(1, "DummyUser")
-      end
-    end
-
-    context "when count value is less then 3" do
-      it "should call the Manager service" do
-        expect(SsoUsersApi::Manager).to receive(:new).with(user).and_return(double(call: true))
-        SsoUsersApi::ManagerJob.perform_now(1, "DummyUser", 2)
-      end
-    end
-
-    context 'when the count value is 3' do
-      it "should not call the manager service" do
-        expect(SsoUsersApi::Manager).to receive(:new).never
-        SsoUsersApi::ManagerJob.perform_now(1, "DummyUser", 3)
-      end
-    end
-
     context 'when calling the manager service raises an error' do
       it "should put the job back on the queue an increment the counter" do
-        expect(SsoUsersApi::Manager).to receive(:new).with(user).and_raise(Flexirest::TimeoutException.new("Timed out"))
+        manager = double
+        expect(manager).to receive(:call).and_raise(Flexirest::TimeoutException.new("Timed out"))
+        expect(SsoUsersApi::Manager).to receive(:new).with(user).and_return(manager)
         expect(SsoUsersApi::ManagerJob).to receive(:perform_later).with(1, "DummyUser", 1)
         SsoUsersApi::ManagerJob.perform_now(1, "DummyUser")
+      end
+
+      context "and we have already attempted twice" do
+        it "should not attempt a fourth time but should reraise the error" do
+          manager = double
+          expect(manager).to receive(:call).and_raise(Flexirest::TimeoutException.new("Timed out"))
+          expect(SsoUsersApi::Manager).to receive(:new).with(user).and_return(manager)
+          expect(SsoUsersApi::ManagerJob).not_to receive(:perform_later)
+
+          expect { SsoUsersApi::ManagerJob.perform_now(1, "DummyUser", 2) }.to raise_error(Flexirest::TimeoutException)
+        end
       end
     end
   end
