@@ -19,7 +19,7 @@ module SsoUsersApi
     private
 
     def raw_results
-      @raw_results ||= SsoUsersApi::UserApplicationAccessList.list email: user.email
+      @raw_results ||= SsoUsersApi::UserApplicationAccessList.list email: user.email.downcase
     end
 
     def filtered_gp_results
