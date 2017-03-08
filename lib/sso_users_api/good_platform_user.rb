@@ -11,7 +11,7 @@ module SsoUsersApi
     end
 
     def call
-      filtered_gp_results
+      active_gp_results
     rescue Flexirest::HTTPNotFoundClientException
       []
     end
@@ -27,7 +27,7 @@ module SsoUsersApi
     end
 
     def active_gp_results
-      filtered_gp_results.select { |record| record.status == "active"}
+      filtered_gp_results.select { |record| record.table.status == "active" && record.table.org_status == "active" }
     end
   end
 end

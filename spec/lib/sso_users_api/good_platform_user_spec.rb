@@ -7,6 +7,11 @@ describe SsoUsersApi::GoodPlatformUser do
   let(:user) { OpenStruct.new(email: email) }
   let(:email) { "this@that.com" }
 
+
+  before do
+    SsoUsersApi::Base.access_token = "__token__"
+  end
+
   describe ".call" do
     subject { klass.call(user) }
 
@@ -38,8 +43,7 @@ describe SsoUsersApi::GoodPlatformUser do
       let(:email) { "tom@givecorps.com" }
       it "should return an empty array" do
         VCR.use_cassette('user_with_access_records_but_no_gp_records') do
-          SsoUsersApi::UserApplicationAccessList.list email: user.email
-          # expect(subject).to eq([])
+          expect(subject).to eq([])
         end
       end
     end
@@ -48,8 +52,7 @@ describe SsoUsersApi::GoodPlatformUser do
       let(:email) { "nfgcvlx+27-1095214D@gmail.com" }
       it "should return an empty array" do
         VCR.use_cassette('user_with_gp_access_records_all_are_inactive') do
-          # expect(subject).to eq([])
-          SsoUsersApi::UserApplicationAccessList.list email: "tom@givecorps.com"
+          expect(subject).to eq([])
         end
       end
     end
@@ -62,5 +65,15 @@ describe SsoUsersApi::GoodPlatformUser do
         end
       end
     end
+
+    context 'when the results of the user application access call returns results, with at least one active gp ' do
+      let(:email) { "nfgcvlx+27-1095214D@gmail.com" }
+      it "should return an empty array" do
+        VCR.use_cassette('user_with_active_gp_access_records') do
+          expect(subject).to be_present
+        end
+      end
+    end
+
   end
 end
