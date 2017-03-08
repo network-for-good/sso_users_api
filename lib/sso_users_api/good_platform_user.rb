@@ -1,5 +1,13 @@
 module SsoUsersApi
   class GoodPlatformUser
+    # Requests all related user records from the portal server,
+    # which checks with each of the applications and returns all
+    # of the active records for this user
+
+    # These are then filtered for "GP" related records
+    # for which both the user and the org is active.
+    #
+    # It returns the first, if any, of these records
     attr_accessor :user
 
     def self.call(user)
