@@ -7,6 +7,7 @@ require "action_mailer/railtie"
 require "action_view/railtie"
 require "sprockets/railtie"
 require "rails/test_unit/railtie"
+require 'sso_openid'
 
 Bundler.require(*Rails.groups)
 require "sso_users_api"
