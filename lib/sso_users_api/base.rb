@@ -21,6 +21,7 @@ module SsoUsersApi
 
     def add_authentication_details(name, request)
       request.headers["Authorization"] = "Bearer #{ SsoUsersApi::Base.access_token }"
+      request.headers["Content-Type"] = "application/json"
     end
   end
 end
