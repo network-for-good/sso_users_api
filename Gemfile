@@ -10,6 +10,7 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
+gem 'sso_openid', git: 'git://github.com/network-for-good/sso_openid.git', branch: 'master'
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
