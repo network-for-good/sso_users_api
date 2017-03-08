@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'pry' # server side Rails debugging in terminal
   s.add_development_dependency 'pry-byebug' # provides stepper for pry
-  s.add_development_dependency "rspec-rails", '~> 3.4.0'
+  s.add_development_dependency "rspec-rails", '~> 3.5.0'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'vcr'
 end
