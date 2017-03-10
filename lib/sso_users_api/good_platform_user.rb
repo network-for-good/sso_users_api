@@ -27,11 +27,11 @@ module SsoUsersApi
     private
 
     def raw_results
-      @raw_results ||= SsoUsersApi::UserApplicationAccessList.list email: user.email.downcase
+      @raw_results ||= SsoUsersApi::AllAppUsers.call(user)
     end
 
     def filtered_gp_results
-      raw_results.items.select { |record| record.table.app.downcase.match(/gp/) }
+      raw_results.select { |record| record.table.app.downcase.match(/gp/) }
     end
 
     def active_gp_results

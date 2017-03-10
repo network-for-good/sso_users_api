@@ -27,7 +27,7 @@ describe SsoUsersApi::GoodPlatformUser do
     subject { good_platform_user.call }
 
     it "should call the UsersApplicationAccessList list method" do
-      expect(SsoUsersApi::UserApplicationAccessList).to receive(:list).with(email: user.email).and_return(double(items: []))
+      expect(SsoUsersApi::AllAppUsers).to receive(:call).with(user).and_return([])
       subject
     end
 
