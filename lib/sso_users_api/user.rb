@@ -6,9 +6,9 @@ module SsoUsersApi
 
     base_url SsoOpenid::Urls.identity_users.fqdn
 
-    get :all, "api/user"
-    get :find, "api/user/:id"
-    put :update, "api/user/:id"
-    post :create, "api/user"
+    get :all, "/api/user"
+    get :find, "/api/user/:id"
+    put :update, "/api/user/:id"
+    post :create, "/api/user"
   end
 end
