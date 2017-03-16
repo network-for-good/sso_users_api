@@ -2,27 +2,6 @@ require 'spec_helper'
 require 'webmock/rspec'
 require 'vcr'
 
-# This dummy module/class emulates the same class provided by the
-# sso openid gem. The sso users api gem only uses it to supply the appropriate
-# url. All of the sso urls are managed through the Openid gem (so there is a single)
-# point to list and maintain them all.
-# Instead of requiring that gem in this gem
-# to get specs to pass, we just create the module/class
-# here with the one method it needs
-module SsoOpenid
-  class Urls
-    def self.identity_users
-      OpenStruct.new(fqdn: "https://users-qa.networkforgood.org")
-    end
-
-    def self.portal
-      OpenStruct.new(fqdn: "http://account-qa.networkforgood.com")
-    end
-  end
-end
-
-
-
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 Rails.backtrace_cleaner.remove_silencers!
 

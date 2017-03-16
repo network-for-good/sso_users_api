@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://account-qa.networkforgood.com/api/v1/admins?email=tom@givecorps.com
+    uri: https://account-qa.networkforgood.com/api/v1/admins?email=tom@givecorps.com
     body:
       encoding: US-ASCII
       string: ''
