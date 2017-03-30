@@ -61,7 +61,7 @@ describe SsoUsersApi::GoodPlatformUser do
       let(:email) { "nfgcvlx+27-1095214D@gmail.com" }
       it "should return an empty array" do
         VCR.use_cassette('user_with_gp_access_records_all_orgs_are_inactive') do
-          expect(subject).to eq([])
+          expect(subject).to be_present
         end
       end
     end

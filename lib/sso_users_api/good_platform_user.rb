@@ -35,7 +35,7 @@ module SsoUsersApi
     end
 
     def active_gp_results
-      filtered_gp_results.select { |record| record.table.status == "active" && record.table.org_status == "active" }
+      filtered_gp_results.select { |record| record.table.status == "active" }
     end
   end
 end
