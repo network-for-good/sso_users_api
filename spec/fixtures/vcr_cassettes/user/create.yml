@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://users-qa.networkforgood.org/api/user
+    uri: https://users-uat.networkforgood.org/api/user
     body:
       encoding: UTF-8
       string: '{"firstName":"John","lastName":"Smith","username":"john@smith.com","claims":[{"type":"nfg_account","value":"1230456"}]}'
