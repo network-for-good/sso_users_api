@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://account-qa.networkforgood.com/api/v1/admins?email=nfgcvlx%2B27-1095214d@gmail.com
+    uri: https://account.networkforgood-beta.com/api/v1/admins?email=nfgcvlx%2B27-1095214d@gmail.com
     body:
       encoding: US-ASCII
       string: ''
