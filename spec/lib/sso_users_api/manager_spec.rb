@@ -22,26 +22,53 @@ end
 
 class DummyUserWithSsoID < DummyUserWithoutSsoID
   attr_accessor :sso_id
-
 end
 
-shared_examples_for "a new sso user request" do
+shared_examples_for "calling the update endpoint" do
+  let(:response) { subject }
+
+  it "should attempt to update the user on the SSO server" do
+    allow(SsoUsersApi::User).to receive(:new).with(username: user.email).and_return(find_double)
+    allow(find_double).to receive(:find).and_return(flexirest_find_response)
+    expect(update_double).to receive(:update).and_return(flexirest_response)
+    expect(SsoUsersApi::User).to receive(:new).with(id: sso_id, first_name: user.first_name, last_name: user.last_name, username: user.email, claims: claims).and_return(update_double)
+    subject
+  end
+
+  it "should return an updated user from the sso server" do
+    expect(response.FirstName).to eq(user.first_name)
+    expect(response.ID).not_to be_nil
+  end
+end
+
+shared_examples_for "calling the create endpoint" do
+  let(:response) { subject }
+
   it "should attempt to create the user on the SSO server" do
-    create_double = double
+    allow(SsoUsersApi::User).to receive(:new).with(username: user.email).and_return(find_double)
+    allow(find_double).to receive(:find).and_return(flexirest_find_response)
     expect(create_double).to receive(:create).and_return(flexirest_response)
     expect(SsoUsersApi::User).to receive(:new).with(first_name: user.first_name, last_name: user.last_name, username: user.email, claims: claims).and_return(create_double)
     subject
   end
 
   it "should return a newly created user from the sso server" do
-    response = subject
     expect(response.FirstName).to eq(user.first_name)
     expect(response.ID).not_to be_nil
   end
 end
 
+shared_examples_for "updating the sso_id" do
+  it "should update the user's sso_id" do
+    expect{ subject }.to change { user.sso_id }.from(nil).to(sso_id_value)
+  end
+end
+
 describe SsoUsersApi::Manager do
-  let(:user) { DummyUserWithoutSsoID.new(params) }
+  let(:find_double) { double }
+  let(:create_double) { double }
+  let(:update_double) { double }
+  let(:sso_id_value) { "0bd1b7b1-ba47-49d3-8210-ad01e17bb5a2" }
   let(:params) { {
                     first_name: "John",
                     last_name: "Smith",
@@ -52,7 +79,7 @@ describe SsoUsersApi::Manager do
   let(:flexirest_response) { OpenStruct.new(first_name: user.first_name,
                                             last_name: user.last_name,
                                             email: user.email,
-                                            id: "0bd1b7b1-ba47-49d3-8210-ad01e17bb5a2") }
+                                            id: sso_id_value) }
 
   describe "#call" do
     subject do
@@ -62,43 +89,40 @@ describe SsoUsersApi::Manager do
       end
     end
 
-    let(:api_request_type) { "create" }
-
-    context "when the user does not respond to sso_id" do
-      it_behaves_like "a new sso user request"
-    end
-
-    context "when the user does respond to sso_id" do
+    describe "A user that responds to sso_id" do
       let(:user) { DummyUserWithSsoID.new(params.merge(sso_id: sso_id)) }
 
-      context "and the sso id is nil" do
+      context "With no sso_id and an existing user" do
         let(:sso_id) { nil }
-
-        it_behaves_like "a new sso user request"
-
-        it "should update the user's sso_id" do
-          expect{ subject }.to change { user.sso_id }.from(nil).to("0bd1b7b1-ba47-49d3-8210-ad01e17bb5a2")
-        end
+        let(:api_request_type) { "create_with_user_found" }
+        let(:flexirest_find_response) { OpenStruct.new(items: [flexirest_response]) }
+        it_behaves_like "calling the update endpoint"
+        it_behaves_like "updating the sso_id"
       end
 
-      context "and the sso id is not blank" do
-        let(:api_request_type) { "update" }
+      context "With no sso_id and no existing user" do
+        let(:sso_id) { nil }
+        let(:api_request_type) { "create_with_no_user_found" }
+        let(:flexirest_find_response) { OpenStruct.new(items: []) }
+        it_behaves_like "calling the create endpoint"
+        it_behaves_like "updating the sso_id"
+      end
 
-        let(:sso_id) { "0bd1b7b1-ba47-49d3-8210-ad01e17bb5a2" }
-        it "should attempt to update the user on the SSO server" do
-          update_double = double
-          expect(update_double).to receive(:update).and_return(flexirest_response)
-          expect(SsoUsersApi::User).to receive(:new).with(id: sso_id, first_name: user.first_name, last_name: user.last_name, username: user.email, claims: claims).and_return(update_double)
-          subject
-        end
-
-        it "should return a updated user from the sso server" do
-          response = subject
-          expect(response.FirstName).to eq(user.first_name)
-          expect(response.ID).not_to be_nil
-        end
+      context "With an sso_id" do
+        let(:sso_id) { sso_id_value }
+        let(:api_request_type) { "create_with_user_found" }
+        let(:flexirest_find_response) { OpenStruct.new(items: [flexirest_response]) }
+        it_behaves_like "calling the update endpoint"
       end
     end
 
+    describe "A user that doesn't respond to sso_id" do
+      let(:user) { DummyUserWithoutSsoID.new(params) }
+      let(:sso_id) { nil }
+
+      let(:api_request_type) { "create_with_no_user_found" }
+      let(:flexirest_find_response) { OpenStruct.new(items: []) }
+      it_behaves_like "calling the create endpoint"
+    end
   end
 end

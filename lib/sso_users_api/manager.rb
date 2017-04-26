@@ -13,6 +13,7 @@ module SsoUsersApi
 
     def new_sso_user
       return nil if sso_id
+      return nil if user_exists?
       response = SsoUsersApi::User.new(base_attrs).create
       # since the sso_id was nil, let's try to update it
       if user.respond_to?(:sso_id)
@@ -42,6 +43,18 @@ module SsoUsersApi
     def sso_id
       return nil unless user.respond_to?(:sso_id)
       user.sso_id
+    end
+
+    def user_exists?
+      response = SsoUsersApi::User.new(username: user.email).find
+      if response.items.any?
+        if user.respond_to?(:sso_id)
+          user.update(sso_id: response.items.first.ID)
+        end
+        return true
+      else
+        return false
+      end
     end
   end
 
