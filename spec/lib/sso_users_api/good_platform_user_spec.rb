@@ -75,5 +75,12 @@ describe SsoUsersApi::GoodPlatformUser do
       end
     end
 
+    context "when the request cannot connect to the endpoint" do
+      it 'should return an empty array' do
+        allow(SsoUsersApi::AllAppUsers).to receive(:call).with(user).and_raise(Flexirest::ConnectionFailedException)
+        expect(subject).to eq([])
+      end
+    end
+
   end
 end
