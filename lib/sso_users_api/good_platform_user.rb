@@ -20,7 +20,7 @@ module SsoUsersApi
 
     def call
       active_gp_results
-    rescue Flexirest::HTTPNotFoundClientException
+    rescue Flexirest::HTTPNotFoundClientException, Flexirest::ConnectionFailedException
       []
     end
 
