@@ -69,7 +69,7 @@ describe SsoUsersApi::ManagerJob do
     context 'when a job is not passed in as a callback' do
       let(:callback_param) { {} }
 
-      it 'should enqueue the callback job' do
+      it 'should not enqueue the callback job' do
         expect(some_callback_job.constantize).to_not receive(:perform_later)
         SsoUsersApi::ManagerJob.perform_now(1, "DummyUser", callback_param)
       end
