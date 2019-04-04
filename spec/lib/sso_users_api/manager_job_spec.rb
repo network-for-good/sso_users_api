@@ -2,6 +2,7 @@ require "spec_helper"
 require 'sso_users_api/manager_job'
 require 'sso_users_api/manager'
 require 'flexirest'
+require 'sso_users_api/logger'
 
 class DummyUser
   def self.find(id)
@@ -61,7 +62,7 @@ describe SsoUsersApi::ManagerJob do
         end
 
         it 'logs properly' do
-          expect(Rails.logger).to receive(:error).with("Failed to execute: #{callback_job_name}, error: #{error}")
+          expect(NfgRestClient::Logger).to receive(:error).with("Failed to execute: #{callback_job_name}, error: #{error}")
           SsoUsersApi::ManagerJob.perform_now(1, "DummyUser", 0, options)
         end
       end
