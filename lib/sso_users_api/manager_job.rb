@@ -1,8 +1,9 @@
 require 'active_job'
 
 module SsoUsersApi
-  class ManagerJob  < ActiveJob::Base
-    queue_as :sso_users_api
+  class ManagerJob
+    include Sidekiq::Worker
+    sidekiq_options queue: 'sso_users_api'
 
     def self.delay_amount
       2
