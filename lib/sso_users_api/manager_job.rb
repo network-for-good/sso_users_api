@@ -1,7 +1,5 @@
-require 'active_job'
-
 module SsoUsersApi
-  class ManagerJob  < ApplicationJob
+  class ManagerJob
     def self.delay_amount
       2
     end
