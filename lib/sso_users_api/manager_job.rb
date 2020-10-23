@@ -1,9 +1,7 @@
 require 'active_job'
 
 module SsoUsersApi
-  class ManagerJob  < ActiveJob::Base
-    queue_as :sso_users_api
-
+  class ManagerJob  < ApplicationJob
     def self.delay_amount
       2
     end
