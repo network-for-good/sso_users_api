@@ -46,7 +46,7 @@ module SsoUsersApi
     end
 
     def user_exists?
-      response = SsoUsersApi::User.new(username: user.email).find
+      response = SsoUsersApi::User.new(username: user.email).search
       if response.items.any?
         if user.respond_to?(:sso_id)
           user.update(sso_id: response.items.first.ID)

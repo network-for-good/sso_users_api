@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://users-uat.networkforgood.org/api/user/?username=john@smith.com
+    uri: https://users-uat.networkforgood.org/api/user?username=john@smith.com
     body:
       encoding: US-ASCII
       string: ''
