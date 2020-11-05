@@ -14,7 +14,7 @@ module SsoUsersApi
       begin
         options[:on_success_call_back_job_name].constantize.perform_later(id) if options[:on_success_call_back_job_name].present?
       rescue StandardError => e
-        Rails.logger.error("Failed to execute: #{options[:on_success_call_back_job_name]}, error: #{e.message}")
+        NfgRestClient::Logger.error("Failed to execute: #{options[:on_success_call_back_job_name]}, error: #{e.message}")
       end
 
     rescue StandardError => e

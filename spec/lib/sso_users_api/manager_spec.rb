@@ -28,8 +28,8 @@ shared_examples_for "calling the update endpoint" do
   let(:response) { subject }
 
   it "should attempt to update the user on the SSO server" do
-    allow(SsoUsersApi::User).to receive(:new).with(username: user.email).and_return(find_double)
-    allow(find_double).to receive(:find).and_return(flexirest_find_response)
+    allow(SsoUsersApi::User).to receive(:new).with(username: user.email).and_return(search_double)
+    allow(search_double).to receive(:search).and_return(flexirest_find_response)
     expect(update_double).to receive(:update).and_return(flexirest_response)
     expect(SsoUsersApi::User).to receive(:new).with(id: sso_id, first_name: user.first_name, last_name: user.last_name, username: user.email, claims: claims).and_return(update_double)
     subject
@@ -45,8 +45,8 @@ shared_examples_for "calling the create endpoint" do
   let(:response) { subject }
 
   it "should attempt to create the user on the SSO server" do
-    allow(SsoUsersApi::User).to receive(:new).with(username: user.email).and_return(find_double)
-    allow(find_double).to receive(:find).and_return(flexirest_find_response)
+    allow(SsoUsersApi::User).to receive(:new).with(username: user.email).and_return(search_double)
+    allow(search_double).to receive(:search).and_return(flexirest_find_response)
     expect(create_double).to receive(:create).and_return(flexirest_response)
     expect(SsoUsersApi::User).to receive(:new).with(first_name: user.first_name, last_name: user.last_name, username: user.email, claims: claims).and_return(create_double)
     subject
@@ -65,7 +65,7 @@ shared_examples_for "updating the sso_id" do
 end
 
 describe SsoUsersApi::Manager do
-  let(:find_double) { double }
+  let(:search_double) { double }
   let(:create_double) { double }
   let(:update_double) { double }
   let(:sso_id_value) { "0bd1b7b1-ba47-49d3-8210-ad01e17bb5a2" }

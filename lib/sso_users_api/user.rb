@@ -8,6 +8,7 @@ module SsoUsersApi
 
     get :all, "/api/user"
     get :find, "/api/user/:id"
+    get :search, "api/user", params_encoder: :flat # expects user_name to be passed as a parameter. The users endpoint chokes if the param is encoded/escaped
     put :update, "/api/user/:id"
     post :create, "/api/user"
   end
