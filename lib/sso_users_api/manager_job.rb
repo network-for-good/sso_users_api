@@ -1,30 +1,16 @@
-require 'active_job'
+require 'sidekiq'
 
 module SsoUsersApi
-  class ManagerJob  < ActiveJob::Base
-    queue_as :sso_users_api
+  class ManagerJob
+    include Sidekiq::Worker
 
-    def self.delay_amount
-      2
-    end
+    sidekiq_options queue: :high_priority, retry: 0
 
-    def perform(id, class_name, count = 0, options = {})
+    def perform(id, class_name, options = {})
       user = class_name.constantize.find(id)
       SsoUsersApi::Manager.new(user).call
-      begin
-        options[:on_success_call_back_job_name].constantize.perform_later(id) if options[:on_success_call_back_job_name].present?
-      rescue StandardError => e
-        NfgRestClient::Logger.error("Failed to execute: #{options[:on_success_call_back_job_name]}, error: #{e.message}")
-      end
-
-    rescue StandardError => e
-      # do not attempt to perform the operation again if this is the third attempt
-      if count >= 2
-        raise
-      else
-        sleep self.class.delay_amount * count
-        self.class.perform_later(id, class_name, count + 1, options)
-      end
+      callback_job_name = options['on_success_call_back_job_name']
+      callback_job_name.constantize.perform_async(id) if callback_job_name.present?
     end
   end
 end

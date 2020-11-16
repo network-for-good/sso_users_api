@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 5.0"
   s.add_dependency "flexirest"
+  s.add_dependency "sidekiq"
 
   s.add_development_dependency 'pry' # server side Rails debugging in terminal
   s.add_development_dependency 'pry-byebug' # provides stepper for pry
