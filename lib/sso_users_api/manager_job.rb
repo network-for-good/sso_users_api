@@ -1,16 +1,65 @@
+# frozen_string_literal: true
+
 require 'sidekiq'
+require 'active_record'
+require_relative 'exception_handler'
 
 module SsoUsersApi
+  # Creates and updates users using the Network for Good identity server
+  # @see SsoUsersApi::Manager
+  # @TODO: is there additional documentation we can reference here?
   class ManagerJob
     include Sidekiq::Worker
 
-    sidekiq_options queue: :high_priority, retry: 0
+    sidekiq_options queue: :high_priority, retry: 5
 
+    sidekiq_retries_exhausted do |msg, retried_exception|
+      original_ex = retried_exception.cause
+      Sidekiq.logger.warn "Failed retrying exception (#{original_ex.class.name}) retries with args #{msg['args']}: #{msg['error_message']}"
+
+      exception_notifier.call(original_ex)
+    end
+
+    # @param [#call] Dependency injection port for host application notification systems like Honeybadger
+    cattr_accessor :exception_notifier, default: Sidekiq.logger.public_method(:error)
+
+    # @param [#call] Dependency injection port for module to parse UAT server exceptions
+    # @see SsoUsersApi::ExceptionHandler
+    attr_writer :exception_handler
+
+    # @param id [Integer] Identifies the record to create or update
+    # @param class_name [String] Identifies the record's class (example: Admin)
+    # @param [Hash] options additional job parameters
+    # @option on_success_call_back_job_name [String] Identifies the follow-on job to be executed upon success
+    # @raise [NameError] when invoked with unrecognized class_name or on_success_call_back_job_name
     def perform(id, class_name, options = {})
+      log_tag = "#{class_name} ##{id}"
+
       user = class_name.constantize.find(id)
       SsoUsersApi::Manager.new(user).call
+
       callback_job_name = options['on_success_call_back_job_name']
-      callback_job_name.constantize.perform_async(id) if callback_job_name.present?
+      return if callback_job_name.blank?
+
+      callback_job_class = callback_job_name.constantize
+      new_job_id = callback_job_class.perform_async(id)
+
+      logger.info "Invoked #{callback_job_class} success callback for #{log_tag} (Job ID ##{new_job_id})"
+    rescue Flexirest::RequestException => e
+      reraisable_exception = exception_handler.call(e) do |warning_msg|
+        logger.warn warning_msg
+        return # rubocop:disable Lint/NonLocalExitFromIterator
+      end
+
+      raise reraisable_exception
+    rescue ActiveRecord::RecordNotFound
+      logger.warn "Unable to find #{log_tag}"
+    end
+
+    private
+
+    def exception_handler
+      @exception_handler ||= SsoUsersApi::ExceptionHandler.new
     end
   end
 end
