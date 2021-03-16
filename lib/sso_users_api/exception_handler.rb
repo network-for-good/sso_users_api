@@ -4,19 +4,25 @@ require_relative 'retryable_exception'
 require 'flexirest'
 
 module SsoUsersApi
-  # Examines exceptions raised when interaction with the SSO User API
-  # to determine which can be ignored, retried, or sent to an exception notifier.
+  # Examines exceptions raised by the SSO User API to determine which can be
+  # ignored, retried, or reported.
   # @example: Ignorable client exceptions (4xx) that will be logged
   #   "User already exists on one of the platforms"
   #   "Email already in use."
-  # @example: Client exceptions indicating a bug that should be reported as exceptions
+  # @example: Retryable, transient exception
+  #   Flexirest::TimeoutException
+  # @example: Client exception indicating a bug that should be reported as an xceptions
   #   "Invalid email"
   # @see SsoUsersApi::ManagerJob
   class ExceptionHandler
-    # Dispose of exceptions either as retryable, ignorable, or notifiable
+    # Decides if an exception is retryable, ignorable, or reportable
     # @param exception [Exception] the original exception
-    # @yieldparam log_msg [String] describes how to log errors that can be ignored
-    # @return [Exception] if we do not yield, this method will return an exception that should be raised
+    # @yieldparam ignore_msg [String] describes how to log errors that can be ignored
+    # @return [SsoUsersApi::RetryableException] if this exception should be retried
+    #   without reporting - wraps the original exception
+    # @return [Flexirest::RequestException] if this exception can be retried, but
+    #   should also be reported to an exception notification service, we return the
+    #   original exception
     def call(exception)
       message = exception.message
       err_tag = "#{exception.class} - #{message}"

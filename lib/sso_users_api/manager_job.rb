@@ -11,17 +11,19 @@ module SsoUsersApi
   class ManagerJob
     include Sidekiq::Worker
 
+    # @param [#call] Dependency injection port for host application notification systems like Honeybadger
+    # @example Installing Honeybadger
+    #   SsoUsersApi::ManagerJob.exception_notifier = Honeybadger.public_method(:notify)
+    cattr_accessor :exception_notifier, default: Sidekiq.logger.public_method(:error)
+
     sidekiq_options queue: :high_priority, retry: 5
 
     sidekiq_retries_exhausted do |msg, retried_exception|
       original_ex = retried_exception.cause
-      Sidekiq.logger.warn "Failed retrying exception (#{original_ex.class.name}) retries with args #{msg['args']}: #{msg['error_message']}"
+      Sidekiq.logger.warn "Failed retrying '#{original_ex.class.name})'with args #{msg['args']}: #{msg['error_message']}"
 
       exception_notifier.call(original_ex)
     end
-
-    # @param [#call] Dependency injection port for host application notification systems like Honeybadger
-    cattr_accessor :exception_notifier, default: Sidekiq.logger.public_method(:error)
 
     # @param [#call] Dependency injection port for module to parse UAT server exceptions
     # @see SsoUsersApi::ExceptionHandler
@@ -46,11 +48,13 @@ module SsoUsersApi
 
       logger.info "Invoked #{callback_job_class} success callback for #{log_tag} (Job ID ##{new_job_id})"
     rescue Flexirest::RequestException => e
-      reraisable_exception = exception_handler.call(e) do |warning_msg|
-        logger.warn warning_msg
+      reraisable_exception = exception_handler.call(e) do |ignorable_msg|
+        # if the handler yields, we know it is safe to log & ignore the exception
+        logger.warn ignorable_msg
         return # rubocop:disable Lint/NonLocalExitFromIterator
       end
 
+      # if the handler did not yield, we should raise the returned exception
       raise reraisable_exception
     rescue ActiveRecord::RecordNotFound
       logger.warn "Unable to find #{log_tag}"
