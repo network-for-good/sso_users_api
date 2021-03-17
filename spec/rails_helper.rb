@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'webmock/rspec'
 require 'vcr'
+
+# TODO: need to set RAILS_ENV to test, a la: ENV["RAILS_ENV"] ||= 'test'
+# That requires re-recording VCR cassettes which was out-of-scope for this change
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 Rails.backtrace_cleaner.remove_silencers!
