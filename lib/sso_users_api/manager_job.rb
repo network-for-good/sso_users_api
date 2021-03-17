@@ -20,7 +20,7 @@ module SsoUsersApi
 
     sidekiq_retries_exhausted do |msg, retried_exception|
       original_ex = retried_exception.cause
-      Sidekiq.logger.warn "Failed retrying '#{original_ex.class.name})'with args #{msg['args']}: #{msg['error_message']}"
+      Rails.logger.warn "Failed retrying '#{original_ex.class.name})'with args #{msg['args']}: #{msg['error_message']}"
 
       exception_notifier.call(original_ex)
     end
@@ -46,18 +46,19 @@ module SsoUsersApi
       callback_job_class = callback_job_name.constantize
       new_job_id = callback_job_class.perform_async(id)
 
-      logger.info "Invoked #{callback_job_class} success callback for #{log_tag} (Job ID ##{new_job_id})"
+      Rails.logger.info "Invoked #{callback_job_class} success callback for #{log_tag} (Job ID ##{new_job_id})"
     rescue Flexirest::RequestException => e
       reraisable_exception = exception_handler.call(e) do |ignorable_msg|
         # if the handler yields, we know it is safe to log & ignore the exception
-        logger.warn ignorable_msg
+        Rails.logger.warn ignorable_msg
         return # rubocop:disable Lint/NonLocalExitFromIterator
       end
 
+      Rails.logger.error "Re-raising #{e.class} - #{e.message}"
       # if the handler did not yield, we should raise the returned exception
       raise reraisable_exception
     rescue ActiveRecord::RecordNotFound
-      logger.warn "Unable to find #{log_tag}"
+      Rails.logger.warn "Unable to find #{log_tag}"
     end
 
     private
