@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://users-uat.networkforgood.org/api/user
+    body:
+      encoding: UTF-8
+      string: '{"firstName":"John","lastName":"Smith","username":"john@smith.com","claims":[{"type":"nfg_account","value":"1230456"}]}'
+    headers:
+      User-Agent:
+      - Flexirest/1.10.10
+      Connection:
+      - Keep-Alive
+      Accept:
+      - application/hal+json, application/json;q=0.5
+      Authorization:
+      - Bearer __dummy_token__
+      Content-Type:
+      - application/json; charset=utf-8
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Length:
+      - '163'
+      Content-Type:
+      - application/json; charset=utf-8
+      Location:
+      - https://users-qa.networkforgood.org/api/user/0bd1b7b1-ba47-49d3-8210-ad01e17bb5a2
+      Server:
+      - Microsoft-IIS/8.0
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Thu, 22 Dec 2016 21:23:40 GMT
+    body:
+      encoding: UTF-8
+      string: '{"ID":"0bd1b7b1-ba47-49d3-8210-ad01e17bb5a2","Username":"john@smith.com","FirstName":"John","LastName":"Smith","Claims":[{"Type":"nfg_account","Value":"1230456"}]}'
+    http_version:
+  recorded_at: Thu, 22 Dec 2016 21:23:40 GMT
+recorded_with: VCR 3.0.3

@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://account.portal.test/api/v1/admins?email=tom@givecorps.com
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Flexirest/1.10.10
+      Connection:
+      - Keep-Alive
+      Accept:
+      - application/hal+json, application/json;q=0.5
+      Authorization:
+      - Bearer __token__
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 08 Mar 2017 19:50:49 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - close
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Etag:
+      - W/"0ae6ce6f1852073f0d1f72206ff4c07d"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 5e330f76-a2d3-4314-a449-eae497379088
+      X-Runtime:
+      - '0.404505'
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"table":{"first_name":"Tom","last_name":"Hoen","email":"tom@givecorps.com","status":"active","roles":["supervisor","sysadmin"],"root_url":"http://baltimore.sso-qa.givecorps.com/admin/auth/sso-openid","org_status":"active","app":"evo","org_identifier":"baltimore"}},{"table":{"first_name":"Tom","last_name":"Hoen","email":"tom@givecorps.com","status":"active","roles":["manager"],"root_url":"http://troweprice.sso-qa.givecorps.com/admin/auth/sso-openid","org_status":"active","app":"evo","org_identifier":"troweprice"}}]'
+    http_version:
+  recorded_at: Wed, 08 Mar 2017 19:50:49 GMT
+recorded_with: VCR 3.0.3
