@@ -17,13 +17,13 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "rails", "~> 5.0"
+  s.add_dependency "rails", "~> 6.0"
   s.add_dependency "flexirest"
   s.add_dependency "sidekiq"
 
   s.add_development_dependency 'pry' # server side Rails debugging in terminal
   s.add_development_dependency 'pry-byebug' # provides stepper for pry
-  s.add_development_dependency "rspec-rails", '~> 3.5.0'
+  s.add_development_dependency "rspec-rails", '~> 4.0'
   s.add_development_dependency "rspec_junit_formatter"
   s.add_development_dependency "rspec-sidekiq"
   s.add_development_dependency 'webmock'

@@ -8,7 +8,7 @@ http_interactions:
       string: '{"firstName":"John","lastName":"Smith","username":"john@smith.com","claims":[{"type":"nfg_account","value":"1230456"}]}'
     headers:
       User-Agent:
-      - Flexirest/1.3.30
+      - Flexirest/1.10.10
       Connection:
       - Keep-Alive
       Accept:
