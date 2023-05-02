@@ -45,7 +45,11 @@ module SsoUsersApi
       return if callback_job_name.blank?
 
       callback_job_class = callback_job_name.constantize
-      new_job_id = callback_job_class.perform_async(id)
+      if options["on_success_call_back_job_options"]
+        new_job_id = callback_job_class.perform_async(id, **options["on_success_call_back_job_options"])
+      else
+        new_job_id = callback_job_class.perform_async(id)
+      end
 
       NfgRestClient::Logger.info "Invoked #{callback_job_class} success callback for #{log_tag} (Job ID ##{new_job_id})"
     rescue Flexirest::RequestException => e
