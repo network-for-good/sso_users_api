@@ -28,7 +28,7 @@ RSpec.describe SsoUsersApi::ManagerJob do
   let(:callback_job) { CallbackJob }
   let(:callback_job_name) { 'CallbackJob' }
   let(:options) do
-    { on_success_call_back_job_name: 'CallbackJob' }
+    { "on_success_call_back_job_name" => 'CallbackJob' }
   end
 
   let(:api_manager) { double(:api_manager, call: nil) }
