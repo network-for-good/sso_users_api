@@ -84,7 +84,7 @@ describe SsoUsersApi::Manager do
   describe "#call" do
     subject do
       SsoUsersApi::Base.access_token = "__dummy_token__"
-      VCR.use_cassette "user/#{api_request_type}" do
+      VCR.use_cassette("user/#{api_request_type}", allow_playback_repeats: true) do
         manager.call
       end
     end
