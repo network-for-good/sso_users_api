@@ -24,33 +24,14 @@ http_interactions:
       code: 404
       message: Not Found
     headers:
-      Server:
-      - nginx
       Date:
-      - Wed, 08 Mar 2017 19:50:49 GMT
+      - Wed, 03 May 2023 16:09:44 GMT
+      Content-Length:
+      - '11'
       Content-Type:
-      - application/json; charset=utf-8
-      Transfer-Encoding:
-      - chunked
-      Connection:
-      - close
-      Status:
-      - 404 Not Found
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      Cache-Control:
-      - no-cache
-      X-Request-Id:
-      - 2bc37e1d-bbb3-4f7d-8539-41a8b3a41097
-      X-Runtime:
-      - '0.312020'
+      - text/plain; charset=utf-8
     body:
-      encoding: ASCII-8BIT
-      string: '{"errors":"Admin could not be found"}'
-    http_version:
-  recorded_at: Wed, 08 Mar 2017 19:50:49 GMT
-recorded_with: VCR 3.0.3
+      encoding: UTF-8
+      string: unknown app
+  recorded_at: Wed, 03 May 2023 16:09:44 GMT
+recorded_with: VCR 6.1.0
