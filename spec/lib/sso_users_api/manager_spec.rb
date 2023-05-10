@@ -114,6 +114,39 @@ describe SsoUsersApi::Manager do
         let(:flexirest_find_response) { OpenStruct.new(items: [flexirest_response]) }
         it_behaves_like "calling the update endpoint"
       end
+
+      context "when SsoUsersApi create method didn't return an ID value" do
+        before do
+          allow(SsoUsersApi::User).to receive(:new).once.with(username: user.email).and_return(search_double, search_double2)
+          allow(search_double).to receive(:search).and_return(flexirest_find_response)
+          allow(search_double2).to receive(:search).and_return(flexirest_find_response2)
+
+          allow(SsoUsersApi::User).to receive(:new).once.with(first_name: user.first_name, last_name: user.last_name, username: user.email, claims: claims).and_return(create_double2)
+          allow(create_double2).to receive(:create).and_return(flexirest_response)
+        end
+
+        let(:flexirest_response) do
+          OpenStruct.new(
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email
+          )
+        end
+        let(:create_double2) { double }
+        let(:search_double2) { double }
+        let(:sso_id) { nil }
+        let(:api_request_type) { "create_with_user_found" }
+        let(:flexirest_find_response) { OpenStruct.new(items: []) }
+        let(:flexirest_find_response2) { OpenStruct.new(items: [flexirest_response]) }
+        let(:flexirest_response2) { OpenStruct.new }
+
+        it "queries for User with search and updates the sso_id" do
+          expect(create_double).to receive(:create).and_return(flexirest_response2)
+          expect(SsoUsersApi::User).to receive(:new).with(first_name: user.first_name, last_name: user.last_name, username: user.email, claims: claims).and_return(create_double)
+
+          subject
+        end
+      end
     end
 
     describe "A user that doesn't respond to sso_id" do
