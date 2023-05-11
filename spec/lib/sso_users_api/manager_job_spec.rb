@@ -62,6 +62,26 @@ RSpec.describe SsoUsersApi::ManagerJob do
         end
       end
     end
+
+    context "when a job is passed in as a callback with custom options for that second job gets the right attributes" do
+      let(:options) do
+        {
+          "on_success_call_back_job_name" => "CallbackJob",
+          "on_success_call_back_job_options" => job_specific_options
+        }
+      end
+
+      let(:job_specific_options) do
+        { "create_admin_in_evo" => true }
+      end
+
+      it "enqueues the callback job with the right attributes" do
+        Sidekiq::Testing.inline! do
+          expect(callback_job).to receive(:perform_async).with(1, job_specific_options)
+          SsoUsersApi::ManagerJob.perform_async(1, "DummyUser", options)
+        end
+      end
+    end
   end
 
   context 'when a Flexirest exception occurs' do
