@@ -11,10 +11,9 @@ gemspec
 # your gem to rubygems.org.
 
 # *** NFG specific gems - Start *** #
-source "https://rubygems.pkg.github.com/network-for-good" do
-  # NFG gems for authenticating using the NFG openid server
-  gem "sso_openid", '>= 6.0.5'
-end
+# since this is only available through github, we can't add it as a development dependency
+# in the gem spec
+gem 'sso_openid', git: 'https://github.com/network-for-good/sso_openid.git', branch: 'rails_6'
 
 # To use a debugger
 # gem 'byebug', group: [:development, :test]

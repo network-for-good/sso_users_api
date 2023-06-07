@@ -3,6 +3,7 @@
 require 'sidekiq'
 require 'active_record'
 require_relative 'exception_handler'
+require 'sso_users_api/logger'
 
 module SsoUsersApi
   # Creates and updates users using the Network for Good identity server
@@ -20,7 +21,7 @@ module SsoUsersApi
 
     sidekiq_retries_exhausted do |msg, retried_exception|
       original_ex = retried_exception.cause
-      Rails.logger.warn "Failed retrying '#{original_ex.class.name})'with args #{msg['args']}: #{msg['error_message']}"
+      NfgRestClient::Logger.warn "Failed retrying '#{original_ex.class.name})'with args #{msg['args']}: #{msg['error_message']}"
 
       exception_notifier.call(original_ex)
     end
@@ -44,21 +45,25 @@ module SsoUsersApi
       return if callback_job_name.blank?
 
       callback_job_class = callback_job_name.constantize
-      new_job_id = callback_job_class.perform_async(id)
+      if options["on_success_call_back_job_options"]
+        new_job_id = callback_job_class.perform_async(id, **options["on_success_call_back_job_options"])
+      else
+        new_job_id = callback_job_class.perform_async(id)
+      end
 
-      Rails.logger.info "Invoked #{callback_job_class} success callback for #{log_tag} (Job ID ##{new_job_id})"
+      NfgRestClient::Logger.info "Invoked #{callback_job_class} success callback for #{log_tag} (Job ID ##{new_job_id})"
     rescue Flexirest::RequestException => e
       reraisable_exception = exception_handler.call(e) do |ignorable_msg|
         # if the handler yields, we know it is safe to log & ignore the exception
-        Rails.logger.warn ignorable_msg
+        NfgRestClient::Logger.warn ignorable_msg
         return # rubocop:disable Lint/NonLocalExitFromIterator
       end
 
-      Rails.logger.error "Re-raising #{e.class} - #{e.message}"
+      NfgRestClient::Logger.error "Re-raising #{e.class} - #{e.message}"
       # if the handler did not yield, we should raise the returned exception
       raise reraisable_exception
     rescue ActiveRecord::RecordNotFound
-      Rails.logger.warn "Unable to find #{log_tag}"
+      NfgRestClient::Logger.warn "Unable to find #{log_tag}"
     end
 
     private
